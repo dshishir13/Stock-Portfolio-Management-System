@@ -1,82 +1,75 @@
 <?php
-    // Include necessary files and configurations
-    require_once '../config/config.php';
-    require_once '../includes/db.php';
+// Include the necessary files
+require_once '../includes/config.php';
+require_once '../includes/db.php';
+require_once '../includes/functions.php';
 
-    // Start session
-    session_start();
+// Start a session
+session_start();
 
-    // Check if the user is already logged in, redirect to dashboard if true
-    if (isset($_SESSION['user_id'])) {
-        header('Location: ../dashboard/');
+// Check if the user is already logged in
+if (!empty($_SESSION['user_id'])) {
+    // Redirect to the dashboard if the user is already logged in
+    header('Location: ../dashboard/index.php');
+    exit();
+}
+
+// Handle form submission
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the input values from the login form
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Perform login validation and verification here
+    // You need to write the code to check if the username and password match a valid user in the database
+    // Assuming you have a function called "validateLogin" that checks the credentials and returns the user ID
+    $userId = validateLogin($username, $password);
+
+    if ($userId) {
+        // Login successful
+        // Store the user ID in the session
+        $_SESSION['user_id'] = $userId;
+
+        // Redirect to the dashboard
+        header('Location: ../dashboard/index.php');
+        exit();
+    } else {
+        // Login failed
+        // You can handle the failure, such as displaying an error message or redirecting back to the login page with an error parameter
+        header('Location: ../auth/login.php?error=1');
         exit();
     }
+}
 
-    // Define variables and initialize with empty values
-    $username = $password = '';
-    $username_err = $password_err = '';
-
-    // Process form data when the form is submitted
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // Validate username
-        if (empty(trim($_POST['username']))) {
-            $username_err = 'Please enter your username.';
-        } else {
-            $username = trim($_POST['username']);
-        }
-
-        // Validate password
-        if (empty(trim($_POST['password']))) {
-            $password_err = 'Please enter your password.';
-        } else {
-            $password = trim($_POST['password']);
-        }
-
-        // Check database for username and password
-        if (empty($username_err) && empty($password_err)) {
-            // Add your database query logic here to validate the username and password
-            // If the credentials are valid, set the session variables and redirect to the dashboard
-            // Example:
-            // $user_id = 123; // Replace with actual user ID retrieved from the database
-            // $_SESSION['user_id'] = $user_id;
-            // header('Location: ../dashboard/');
-            // exit();
-
-            // For this example, let's assume the credentials are invalid
-            $username_err = 'Invalid username or password.';
-        }
-    }
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="../assets/css/styles.css">
+    <!-- Include your CSS and JavaScript files -->
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/script.js"></script>
 </head>
 <body>
+    <!-- Include the header file -->
     <?php include '../templates/header.php'; ?>
 
-    <main>
+    <div class="container">
         <h1>Login</h1>
-        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" value="<?php echo $username; ?>">
-                <span class="error"><?php echo $username_err; ?></span>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password">
-                <span class="error"><?php echo $password_err; ?></span>
-            </div>
-            <div class="form-group">
-                <button type="submit">Login</button>
-            </div>
-            <p>Don't have an account? <a href="register.php">Register here</a>.</p>
+        
+        <!-- Login form -->
+        <form method="POST" action="">
+            <!-- Add your login form fields here -->
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
         </form>
-    </main>
+        <p>Don't have an account? <a href="../auth/register.php">Register here</a></p>
+    </div>
 
+    <!-- Include the footer file -->
     <?php include '../templates/footer.php'; ?>
 </body>
 </html>
