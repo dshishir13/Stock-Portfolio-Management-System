@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Your Stock Management System</title>
-    <link rel="stylesheet" type="text/css" href="assets/css/styles.css">
-</head>
-<body>
-    <header>
-        <nav>
-            <!-- Add your navigation links or menu here -->
-        </nav>
-    </header>
-
-    <main>
+<footer>
+        <!-- Your footer content goes here -->
+        <p>&copy; <?php echo date('Y'); ?> Stock Portfolio Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>
