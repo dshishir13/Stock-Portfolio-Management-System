@@ -1,6 +1,5 @@
+<!-- index.php -->
 <?php
-// index.php
-
 // Include the necessary files
 require_once '../includes/config.php';
 require_once '../includes/db.php';
@@ -16,26 +15,17 @@ if (!isLoggedIn()) {
     exit();
 }
 
-// Get the current user ID
+// Get the user ID
 $userId = getCurrentUserId();
 
-// Fetch user details from the database
-$query = "SELECT * FROM users WHERE id = :id";
-$params = [':id' => $userId];
-$user = fetchSingleRow($query, $params);
-
-// Check if user details were fetched successfully
-if (!$user || !is_array($user)) {
-    // Handle the error, e.g., display an error message or redirect to an error page
-    // For example:
-    echo "Error retrieving user details.";
-    exit();
-}
-
-// Fetch user's portfolio details from the database
-$query = "SELECT * FROM stocks INNER JOIN transactions ON stocks.id = transactions.stock_id WHERE user_id = :userId";
+// Fetch the portfolio data
+$query = "SELECT s.symbol, s.name, t.quantity, t.price, t.transaction_type, t.created_at
+          FROM stocks s
+          INNER JOIN transactions t ON s.id = t.stock_id
+          WHERE t.user_id = :userId";
 $params = [':userId' => $userId];
 $portfolio = fetchMultipleRows($query, $params);
+
 ?>
 
 <!DOCTYPE html>
@@ -51,38 +41,44 @@ $portfolio = fetchMultipleRows($query, $params);
     <?php include '../templates/header.php'; ?>
 
     <div class="container">
-        <h1>Welcome, <?php echo $user['username']; ?>!</h1>
+        <h1>Welcome, <?php echo isset($user['username']) ? $user['username'] : ''; ?>!</h1>
         
         <!-- Display user's portfolio -->
-        <h2>Portfolio</h2>
-        <?php if (count($portfolio) > 0): ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Stock Symbol</th>
-                        <th>Stock Name</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Transaction Type</th>
-                        <th>Transaction Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($portfolio as $row): ?>
+       <!-- portfolio.php -->
+
+            <h2>Portfolio</h2>
+            <?php if (!empty($portfolio)): ?>
+                <table>
+                    <thead>
                         <tr>
-                            <td><?php echo $row['symbol']; ?></td>
-                            <td><?php echo $row['name']; ?></td>
-                            <td><?php echo $row['quantity']; ?></td>
-                            <td><?php echo $row['price']; ?></td>
-                            <td><?php echo $row['transaction_type']; ?></td>
-                            <td><?php echo $row['created_at']; ?></td>
+                            <th>Stock Symbol</th>
+                            <th>Stock Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Transaction Type</th>
+                            <th>Transaction Date</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <p>No stocks in the portfolio.</p>
-        <?php endif; ?>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($portfolio as $row): ?>
+                            <tr>
+                                <td><?php echo $row['symbol']; ?></td>
+                                <td><?php echo $row['name']; ?></td>
+                                <td><?php echo $row['quantity']; ?></td>
+                                <td><?php echo $row['price']; ?></td>
+                                <td><?php echo $row['transaction_type']; ?></td>
+                                <td><?php echo $row['created_at']; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p>No stocks in the portfolio.</p>
+            <?php endif; ?>
+
+
+        <!-- Add Transaction button -->
+        <a href="../includes/addPortfolio.php" class="add-transaction-btn">Add Transaction</a>
 
         <a href="../auth/logout.php">Logout</a>
     </div>

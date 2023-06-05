@@ -103,6 +103,38 @@ function registerUser($username, $password, $email) {
     }
 }
 
+/**
+ * Executes a query and returns the last inserted ID.
+ * @param string $query The SQL query to execute.
+ * @param array $params An associative array of parameter values.
+ * @return int|false The last inserted ID if successful, false otherwise.
+ */
+function executeQueryAndGetLastInsertId($query, $params)
+{
+    global $pdo;
+
+    try {
+        // Check if the database connection is established
+        if (!$pdo) {
+            connectToDatabase();
+        }
+
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+
+        // Get the last inserted ID
+        $lastInsertId = $pdo->lastInsertId();
+
+        // Return the last inserted ID
+        return $lastInsertId;
+    } catch (PDOException $e) {
+        // Handle the exception, e.g., log the error or display an error message
+        // For example:
+        error_log('Error executing query: ' . $e->getMessage());
+        return false;
+    }
+}
+
 // Function to display success message
 function displaySuccessMessage($message) {
     echo '<div class="alert alert-success">' . $message . '</div>';

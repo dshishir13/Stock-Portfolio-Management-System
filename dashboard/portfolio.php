@@ -1,8 +1,8 @@
 <?php
     // Include the necessary files
-    require_once 'config.php';
-    require_once 'db.php';
-    require_once 'functions.php';
+    require_once '../includes/config.php';
+    require_once '../includes/db.php';
+    require_once '../includes/functions.php';
 
     // Check if the user is logged in
     if (!isLoggedIn()) {
@@ -30,7 +30,7 @@
 </head>
 <body>
     <!-- Include the header file -->
-    <?php include 'templates/header.php'; ?>
+    <?php include '../templates/header.php'; ?>
 
     <div class="container">
         <h1>My Portfolio</h1>
@@ -67,6 +67,6 @@
     </div>
 
     <!-- Include the footer file -->
-    <?php include 'templates/footer.php'; ?>
+    <?php include '../templates/footer.php'; ?>
 </body>
 </html>
