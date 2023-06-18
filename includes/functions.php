@@ -57,12 +57,53 @@ function logout() {
 }
 
 // Function to execute a database query
-function executeQuery($query, $params = []) {
+function executeQuery($query, $params = array()) {
     global $pdo;
 
-    $stmt = $pdo->prepare($query);
-    $stmt->execute($params);
+    try {
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+        return $stmt->rowCount();
+    } catch (PDOException $e) {
+        // Handle the error appropriately, e.g. logging or displaying an error message
+        exit('Failed to execute query: ' . $e->getMessage());
+    }
 }
+
+// Fetches a stock by symbol and name
+function getStockBySymbolAndName(string $symbol, string $name): ?array {
+    $query = "SELECT id FROM stocks WHERE symbol = :symbol AND name = :name";
+    $params = [
+        ':symbol' => $symbol,
+        ':name' => $name
+    ];
+    return fetchSingleRow($query, $params);
+}
+
+// Adds a new stock to the stocks table
+function addStock(string $symbol, string $name, float $price): int {
+    $query = "INSERT INTO stocks (symbol, name, price) VALUES (:symbol, :name, :price)";
+    $params = [
+        ':symbol' => $symbol,
+        ':name' => $name,
+        ':price' => $price
+    ];
+    return executeQuery($query, $params);
+}
+
+// Adds a new transaction to the transactions table
+function addTransaction(int $userId, int $stockId, int $quantity, float $price, string $transactionType): void {
+    $query = "INSERT INTO transactions (user_id, stock_id, quantity, price, transaction_type) VALUES (:userId, :stockId, :quantity, :price, :transactionType)";
+    $params = [
+        ':userId' => $userId,
+        ':stockId' => $stockId,
+        ':quantity' => $quantity,
+        ':price' => $price,
+        ':transactionType' => $transactionType
+    ];
+    executeQuery($query, $params);
+}
+
 
 // Function to get the last inserted ID
 function getLastInsertId() {
@@ -134,6 +175,17 @@ function executeQueryAndGetLastInsertId($query, $params)
         return false;
     }
 }
+
+// Function to fetch a single value from the database
+function fetchSingleValue($query, $params = []) {
+    global $pdo;
+
+    $stmt = $pdo->prepare($query);
+    $stmt->execute($params);
+
+    return $stmt->fetchColumn();
+}
+
 
 // Function to display success message
 function displaySuccessMessage($message) {
