@@ -1,23 +1,27 @@
 <?php
-    // Include the necessary files
-    require_once '../includes/config.php';
-    require_once '../includes/db.php';
-    require_once '../includes/functions.php';
+// Include the necessary files
+require_once '../includes/config.php';
+require_once '../includes/db.php';
+require_once '../includes/functions.php';
 
-    // Check if the user is logged in
-    if (!isLoggedIn()) {
-        // Redirect to the login page if the user is not logged in
-        header('Location: login.php');
-        exit();
-    }
+// Check if the user is logged in
+if (!isLoggedIn()) {
+    // Redirect to the login page if the user is not logged in
+    header('Location: login.php');
+    exit();
+}
 
-    // Get the current user ID
-    $userId = getCurrentUserId();
+// Get the current user ID
+$userId = getCurrentUserId();
 
-    // Fetch user's portfolio details from the database
-    $query = "SELECT * FROM stocks INNER JOIN transactions ON stocks.id = transactions.stock_id WHERE user_id = :userId";
-    $params = [':userId' => $userId];
-    $portfolio = fetchMultipleRows($query, $params);
+// Fetch user's portfolio details from the database
+$query = "SELECT s.symbol, s.name, SUM(t.quantity) AS total_quantity, SUM(t.quantity * t.price) AS total_value
+          FROM stocks s
+          INNER JOIN transactions t ON s.id = t.stock_id
+          WHERE t.user_id = :userId
+          GROUP BY s.symbol, s.name";
+$params = [':userId' => $userId];
+$portfolio = fetchMultipleRows($query, $params);
 ?>
 
 <!DOCTYPE html>
@@ -25,8 +29,8 @@
 <head>
     <title>Stock Portfolio Management System - Portfolio</title>
     <!-- Include your CSS and JavaScript files -->
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/script.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/script.js"></script>
 </head>
 <body>
     <!-- Include the header file -->
@@ -42,10 +46,8 @@
                     <tr>
                         <th>Stock Symbol</th>
                         <th>Stock Name</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Transaction Type</th>
-                        <th>Transaction Date</th>
+                        <th>Total Quantity</th>
+                        <th>Total Value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,10 +55,8 @@
                         <tr>
                             <td><?php echo $row['symbol']; ?></td>
                             <td><?php echo $row['name']; ?></td>
-                            <td><?php echo $row['quantity']; ?></td>
-                            <td><?php echo $row['price']; ?></td>
-                            <td><?php echo $row['transaction_type']; ?></td>
-                            <td><?php echo $row['created_at']; ?></td>
+                            <td><?php echo $row['total_quantity']; ?></td>
+                            <td><?php echo $row['total_value']; ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

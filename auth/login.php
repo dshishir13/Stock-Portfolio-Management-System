@@ -1,3 +1,4 @@
+
 <?php
 // Include the necessary files
 require_once '../includes/config.php';
@@ -14,7 +15,6 @@ if (!empty($_SESSION['user_id'])) {
     exit();
 }
 
-// Handle form submission
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get the input values from the login form
@@ -41,16 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 }
-
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Login</title>
-    <!-- Include your CSS and JavaScript files -->
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="../js/script.js"></script>
+    <!-- Include your CSS file -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
     <!-- Include the header file -->

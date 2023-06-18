@@ -1,84 +1,59 @@
 <?php
-// Include the necessary files
 require_once 'config.php';
 require_once 'db.php';
 require_once 'functions.php';
 
-// Start a session
 session_start();
 
-// Check if the user is logged in
 if (!isLoggedIn()) {
-    // Redirect to the login page if the user is not logged in
     header('Location: ../auth/login.php');
     exit();
 }
 
-// Handle form submission
+$userId = getCurrentUserId();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the form data
-    $symbol = $_POST['symbol'];
-    $name = $_POST['name'];
-    $quantity = $_POST['quantity'];
-    $price = $_POST['price'];
-    $transactionType = $_POST['transaction_type'];
+    $symbol = $_POST['symbol'] ?? '';
+    $name = $_POST['name'] ?? '';
+    $quantity = $_POST['quantity'] ?? 0;
+    $price = $_POST['price'] ?? 0;
+    $transactionType = $_POST['transaction_type'] ?? '';
 
-    // Validate the form data (you can add your own validation logic here)
-
-    // Prepare the query to insert the stock
-    $query = "INSERT INTO stocks (symbol, name) VALUES (:symbol, :name)";
-    $params = [
-        ':symbol' => $symbol,
-        ':name' => $name
-    ];
-
-    // Execute the query to insert the stock
-    $stockId = executeQueryAndGetLastInsertId($query, $params);
-
-    if ($stockId) {
-        // Prepare the query to insert the transaction
-        $query = "INSERT INTO transactions (user_id, stock_id, quantity, price, transaction_type) 
-                  VALUES (:userId, :stockId, :quantity, :price, :transactionType)";
-        $params = [
-            ':userId' => getCurrentUserId(),
-            ':stockId' => $stockId,
-            ':quantity' => $quantity,
-            ':price' => $price,
-            ':transactionType' => $transactionType
-        ];
-
-        // Execute the query to insert the transaction
-        executeQuery($query, $params);
-
-        // Redirect to the dashboard or any other page you want
-        header('Location: ../dashboard/index.php');
-        exit();
-    } else {
-        // Handle the error, e.g., display an error message or redirect to an error page
-        // For example:
-        echo "Error adding portfolio.";
+    if (empty($symbol) || empty($name) || empty($quantity) || empty($price) || empty($transactionType)) {
+        $_SESSION['error'] = 'Please fill in all the fields.';
+        header('Location: ../dashboard/addPortfolio.php');
         exit();
     }
+
+    $existingStock = getStockBySymbolAndName($symbol, $name);
+
+    if ($existingStock) {
+        $stockId = $existingStock['id'];
+    } else {
+        $stockId = addStock($symbol, $name, $price);
+    }
+
+    addTransaction($userId, $stockId, $quantity, $price, $transactionType);
+
+    header('Location: ../dashboard/index.php');
+    exit();
 }
 ?>
-
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Add Portfolio - Stock Portfolio Management System</title>
-    <!-- Include your CSS and JavaScript files -->
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
     <script src="../js/script.js"></script>
 </head>
 <body>
-    <!-- Include the header file -->
     <?php include '../templates/header.php'; ?>
 
     <div class="container">
         <h1>Add Portfolio</h1>
 
-        <form action="addPortfolio.php" method="POST">
+        <form class="add-portfolio-form" action="addPortfolio.php" method="POST">
             <label for="symbol">Stock Symbol:</label>
             <input type="text" id="symbol" name="symbol" required>
 
@@ -97,11 +72,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="sell">Sell</option>
             </select>
 
-            <button type="submit">Add Portfolio</button>
+            <button type="submit">Add Transaction</button>
         </form>
     </div>
 
-    <!-- Include the footer file -->
     <?php include '../templates/footer.php'; ?>
 </body>
 </html>

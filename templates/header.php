@@ -5,6 +5,8 @@
 <head>
     <title>Stock Portfolio Management System</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <!-- Link the Font Awesome CSS file if you're using the icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <header>
