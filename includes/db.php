@@ -5,6 +5,20 @@ require_once 'config.php';
 
 // Declare the $pdo variable
 
+// Function to get the database connection
+function getDB()
+{
+    global $pdo;
+
+    // Check if the database connection is established
+    if (!$pdo) {
+        connectToDatabase();
+    }
+
+    return $pdo;
+}
+
+
 
 // Function to establish the database connection
 function connectToDatabase() {

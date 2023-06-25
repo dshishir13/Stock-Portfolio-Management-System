@@ -11,7 +11,6 @@ if (!isLoggedIn()) {
 }
 
 $userId = getCurrentUserId();
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $symbol = $_POST['symbol'] ?? '';
     $name = $_POST['name'] ?? '';
@@ -33,7 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stockId = addStock($symbol, $name, $price);
     }
 
-    addTransaction($userId, $stockId, $quantity, $price, $transactionType);
+    // Calculate the transaction value
+    $transactionValue = $quantity * $price;
+
+    // Add the transaction with the transaction value
+    addTransaction($userId, $stockId, $quantity, $price, $transactionType, $transactionValue);
 
     header('Location: ../dashboard/index.php');
     exit();
