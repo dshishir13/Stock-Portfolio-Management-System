@@ -9,7 +9,11 @@
 
     // Redirect the user to the appropriate page based on their authentication status
     if (isLoggedIn()) {
-        header('Location: dashboard/index.php');
+        if (isAdmin()) {
+            header('Location: admin/adminDashboard.php');
+        } else {
+            header('Location: dashboard/index.php');
+        }
         exit();
     } else {
         header('Location: auth/login.php');

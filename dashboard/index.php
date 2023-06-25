@@ -5,6 +5,7 @@ require_once '../includes/config.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 
+
 // Start a session
 session_start();
 
@@ -90,6 +91,18 @@ $transactions = fetchMultipleRows($query2, $params2);
         <?php else: ?>
             <p>No stocks in the portfolio.</p>
         <?php endif; ?>
+
+        <div class="chartContainer">
+            <h2>Pie-Chart</h2>
+            <?php include '../charts/piechart.php'; ?>
+
+            <h2>Bar Chart</h2>
+            <?php include '../charts/barchart.php'; ?>
+            
+
+        </div>
+
+ 
 
 
         <!-- Display user's Transactions -->
