@@ -1,5 +1,8 @@
-
 <?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 // Include the necessary files
 require_once '../includes/config.php';
 require_once '../includes/db.php';
@@ -22,17 +25,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     // Perform login validation and verification here
-    // You need to write the code to check if the username and password match a valid user in the database
-    // Assuming you have a function called "validateLogin" that checks the credentials and returns the user ID
-    $userId = validateLogin($username, $password);
+    // Assuming you have a function called "validateLogin" that checks the credentials and returns the user ID and role
+    $user = validateLogin($username, $password);
 
-    if ($userId) {
+    if ($user) {
         // Login successful
-        // Store the user ID in the session
-        $_SESSION['user_id'] = $userId;
+        // Store the user ID and role in the session
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['role'] = $user['role'];
 
-        // Redirect to the dashboard
-        header('Location: ../dashboard/index.php');
+        // Redirect to the appropriate dashboard based on the user's role
+        if ($user['role'] === 'admin') {
+            header('Location: ../admin/adminDashboard.php');
+        } else {
+            header('Location: ../dashboard/index.php');
+        }
         exit();
     } else {
         // Login failed
@@ -42,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -65,6 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Login</button>
         </form>
         <p>Don't have an account? <a href="../auth/register.php">Register here</a></p>
+        
+    
     </div>
 
     <!-- Include the footer file -->

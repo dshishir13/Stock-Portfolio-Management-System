@@ -1,5 +1,3 @@
-<!-- header.php -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,10 +10,10 @@
     <header>
         <nav>
             <ul>
-                <li><a href="../dashboard/index.php">Dashboard</a></li>
-                <li><a href="../transactions/index.php">Transactions</a></li>
-                <li><a href="../portfolio/index.php">Portfolio</a></li>
-                <li><a href="../dashboard/profile.php">Profile</a></li>
+            <li><a href="adminDashboard.php">Dashboard</a></li>
+            <li><a href="manageUsers.php">Manage Users</a></li>
+            <li><a href="products.php">Manage Products</a></li>
+            <li><a href="adminProfile.php">Profile</a></li>
                 <li><a href="../auth/logout.php">Logout</a></li>
             </ul>
         </nav>

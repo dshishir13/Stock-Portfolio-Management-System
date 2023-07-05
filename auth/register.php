@@ -20,11 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
     $email = $_POST['email'];
+    $role = $_POST['role']; // Added role field
 
     // Perform validation and registration process here
-    // You need to write the code to validate the input data and create a new user in the database
+    // You need to write the code to validate the input data and create a new user in the database with the selected role
     // Assuming you have a function called "registerUser" that handles the registration process
-    $success = registerUser($username, $password, $email);
+    $success = registerUser($username, $password, $email, $role); // Pass role to the registerUser function
 
     if ($success) {
         // Registration successful
@@ -61,6 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <input type="email" name="email" placeholder="Email" required>
+            <select name="role"> <!-- Role selection dropdown -->
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
             <button type="submit">Register</button>
         </form>
 
